@@ -1,2 +1,4 @@
 # ztfcosmo
-ZTF Cosmo Data Release repo
+ZTF Cosmo Data Release repo.
+
+Soon be ready for DR2.
