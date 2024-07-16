@@ -24,7 +24,8 @@ def get_saltmodel(which="salt2.4", **params):
     import sncosmo
     if which is None:
         which  ="salt2 v=T21" # default in ztfdr2
-        
+
+    which = which.replace("-", " v=")
     if which in ["salt2.4"]:
         which = "salt2 v=2.4"
     
@@ -43,22 +44,26 @@ def get_saltmodel(which="salt2.4", **params):
 
 class LightCurve( object ):
 
-    def __init__(self, data, saltparam=None, saltmodel=None):
+    def __init__(self, data, saltparam=None, saltmodel=None, phase_range=None):
         """ likely, this is not how you should load the data. 
         See from_name() or from_filename() class methods.
         """
         self.set_data(data)
         self.set_saltparam(saltparam)
         self._saltmodel = saltmodel
+        self._fitphases = phase_range
         
     @classmethod
-    def from_name(cls, name, saltparam=None, saltmodel=None):
+    def from_name(cls, name, saltparam=None, saltmodel=None, phase_range=None):
         """ """
         lcdata = io.get_target_lightcurve(name, as_data=True)
         if saltparam is None:
             saltparam = io.get_data().loc[name]
             
-        this = cls(data=lcdata, saltparam=saltparam, saltmodel=saltmodel)
+        this = cls(data=lcdata,
+                       saltparam=saltparam,
+                       saltmodel=saltmodel,
+                       phase_range=phase_range)
         this._name = name
         return this
     
@@ -457,8 +462,14 @@ class LightCurve( object ):
             ax.plot([time_, time_], fluxes, color=t0color, lw=0.5, zorder=9)
 
             # phase [-10, +40]
-            time_range = [t0-10/(1+self.saltparam["redshift"]),
-                          t0+40/(1+self.saltparam["redshift"])]
+            ## accept both coventions
+            redshift = self.saltparam.get("redshift", self.saltparam.get("z"))
+            phase_range = self.fit_phaserange
+            if phase_range is None:
+                phase_range = [-10, +40]
+                
+            start, stop = phase_range
+            time_range = [t0+start/(1.+redshift), t0+stop/(1.+redshift)]
             if not as_phase:
                 time_range = Time(np.asarray(time_range), format="mjd").datetime
 
@@ -494,6 +505,14 @@ class LightCurve( object ):
         
         return self._saltparam
 
+    @property
+    def fit_phaserange(self):
+        """ """
+        if not hasattr(self, "_fitphases"):
+            return None
+        
+        return self._fitphases
+        
 
     @property
     def flux_zp(self):

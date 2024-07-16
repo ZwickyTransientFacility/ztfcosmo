@@ -20,7 +20,8 @@ def get_ztfcosmodir(directory=None):
 # ============= #
 #   Tables      #
 # ============= #
-def get_data(good_coverage=None, good_lcfit=None, redshift_range=None):
+def get_data(good_coverage=None, good_lcfit=None, redshift_range=None,
+             saltmodel="salt2-T21", band="gri", phase_range=[-10,40]):
     """ """
     sndata = get_sn_data()
     globalhost = get_globalhost_data()
@@ -33,7 +34,6 @@ def get_data(good_coverage=None, good_lcfit=None, redshift_range=None):
 
     # out dataframe
     joined_df = sndata.join( globalhost.join(localhost) )
-
 
     #
     # some additional Selections
@@ -56,22 +56,32 @@ def get_data(good_coverage=None, good_lcfit=None, redshift_range=None):
 
     return joined_df
 
-def get_sn_data():
+def get_sn_data(saltmodel="salt2-T21", band="gri", phase_range=[-10,40]):
     """ """
     ztfcosmodir = get_ztfcosmodir()
-    fullpath = os.path.join(ztfcosmodir, "snia_data.csv")
+    # default
+    if saltmodel=="salt2-T21" and band=="gri" and phase_range==[-10,40]:
+        fullpath = os.path.join(ztfcosmodir, "tables", "snia_data.csv")
+        
+    else:
+        phase = f"phase{phase_range[0]:d}to{phase_range[1]:d}"
+        naming_convention = f"snia_data_{phase}_{band}_{saltmodel}.csv"
+        fullpath = os.path.join(ztfcosmodir, "tables", "extra", naming_convention)
+        if not os.path.isfile(fullpath):
+            raise ValueError(f"unknown data file phase: {phase}, band: {band}, model: {saltmodel} (file: {naming_convention})")
+        
     return pandas.read_csv(fullpath, index_col=0)
 
 def get_globalhost_data():
     """ """
     ztfcosmodir = get_ztfcosmodir()
-    fullpath = os.path.join(ztfcosmodir, "globalhost_data.csv")
+    fullpath = os.path.join(ztfcosmodir, "tables", "globalhost_data.csv")
     return pandas.read_csv(fullpath, index_col=0)
 
 def get_localhost_data():
     """ """
     ztfcosmodir = get_ztfcosmodir()
-    fullpath = os.path.join(ztfcosmodir, "localhost_data.csv")
+    fullpath = os.path.join(ztfcosmodir, "tables", "localhost_data.csv")
     return pandas.read_csv(fullpath, index_col=0)
 
 
@@ -85,7 +95,10 @@ def get_target_spectra(name):
 # ============= #
 #  LightCurves  #
 # ============= #
-def get_target_lightcurve(name, as_data=True):
+def get_target_lightcurve(name, as_data=True,
+                          saltmodel="salt2-T21",
+                          band="gri",
+                          phase_range=[-10,40]):
     """ get the dataframe of a target's lightcurve """
     if as_data:
         ztfcosmodir = get_ztfcosmodir()
@@ -93,7 +106,11 @@ def get_target_lightcurve(name, as_data=True):
         return pandas.read_csv(fullpath,  delim_whitespace=True, comment='#')
 
     from .lightcurve import LightCurve
-    return LightCurve.from_name(name)
+    saltparam = get_sn_data(saltmodel=saltmodel, band=band, phase_range=phase_range).loc[name]
+    return LightCurve.from_name(name,
+                                saltmodel=saltmodel,
+                                saltparam=saltparam,
+                                phase_range=phase_range)
 
 
 # ============= #
