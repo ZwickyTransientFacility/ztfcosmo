@@ -1,5 +1,8 @@
 
+
+
 import os
+import numpy as np
 import pandas
 
 def get_ztfcosmodir(directory=None):
@@ -88,9 +91,64 @@ def get_localhost_data():
 # ============= #
 #   Spectra     #
 # ============= #
-def get_target_spectra(name):
+def get_target_spectra(name, as_data=True):
     """ """
-    raise NotImplementedError("get_spectra to be done.")
+    from . import _SPEC_DATAFILE
+    from . import spectrum
+    fullpath = _SPEC_DATAFILE[_SPEC_DATAFILE["ztfname"]==name]["fullpath"].values
+    
+    # single spectrum case
+    if len(fullpath)==1:
+        file_ = fullpath[0]
+        if as_data:
+            return spectrum.read_spectrum(file_)
+        return spectrum.Spectrum.from_filename(file_)
+    else: # multiple spectra case
+        if as_data:
+            return [spectrum.read_spectrum(file_) for file_ in fullpath]
+        return [spectrum.Spectrum.from_filename(file_) for file_ in fullpath]
+    
+
+def parse_spec_filename(filename):
+    """ file or list of files.
+    
+    Returns
+    -------
+    - Serie if single file
+    - DataFrame otherwise
+    """
+    index = ["ztfname", "date", "telescope", "version"]
+    fdata = []
+    for file_ in np.atleast_1d(filename):
+        file_ = os.path.basename(file_).split(".ascii")[0]
+        name, date, *telescope, origin = file_.split("_")    
+        telescope = "_".join(telescope)
+        fdata.append([name, date, telescope, origin])
+
+    if len(fdata) == 1:
+        return pandas.Series(fdata[0], index=index)
+    
+    return pandas.DataFrame(fdata, columns=index)
+
+def get_spec_datafile():
+    """ """
+    from glob import glob
+    from astropy.time import Time
+    
+    ztfcosmodir = get_ztfcosmodir()
+    specfiles = glob( os.path.join(ztfcosmodir, "spectra", "*.ascii"))
+    datafile = pandas.DataFrame(specfiles, columns=["fullpath"])
+    datafile["basename"] = datafile["fullpath"].str.split(pat="/", expand=True).iloc[:, -1]
+    
+    specfile = pandas.concat([datafile, parse_spec_filename(datafile["basename"])], axis=1)
+    
+    data = get_sn_data()
+    specfile["dateiso"] = Time(np.asarray(specfile["date"].apply(lambda x: f"{x[:4]}-{x[4:6]}-{x[6:]}"), dtype=str), format="iso").mjd
+    specfile = specfile.join(data[["t0", "redshift"]], on="ztfname")
+    specfile["phase_obs"] = (specfile.pop("dateiso")-specfile.pop("t0"))
+    specfile["phase"] = specfile["phase_obs"]/(1+specfile.pop("redshift"))
+        
+    return specfile
 
 # ============= #
 #  LightCurves  #
