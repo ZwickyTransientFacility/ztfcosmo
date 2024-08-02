@@ -174,6 +174,12 @@ def get_target_lightcurve(name, as_data=True,
 # ============= #
 #   Download    #
 # ============= #
+def get_phase_coverage():
+    """ """
+    ztfcosmodir = get_ztfcosmodir()
+    filepath = os.path.join(ztfcosmodir, "tables", "phase_coverage.parquet")
+    return pandas.read_parquet( filepath )
+    
 def download_release(which="dr2", directory=None):
     """ download the ZTF Cosmo release.
 

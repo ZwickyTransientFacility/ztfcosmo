@@ -283,6 +283,9 @@ class LightCurve( object ):
 
         if incl_salt:
             saltmodel = self.get_saltmodel(which=which_model)
+            if np.isnan(saltmodel.parameters).any():
+                saltmodel = None
+                autoscale_salt = False
         else:
              saltmodel = None
              autoscale_salt = False
@@ -391,8 +394,8 @@ class LightCurve( object ):
                         saltdata,
                         color=ZTFCOLOR[band_]["mfc"], zorder=5)
 
-                max_saltlc = np.max([max_saltlc, np.max(saltdata)])
-                min_saltlc = np.min([min_saltlc, np.min(saltdata)])
+                max_saltlc = np.nanmax([max_saltlc, np.max(saltdata)])
+                min_saltlc = np.nanmin([min_saltlc, np.min(saltdata)])
             
         if inmag:
             ax.invert_yaxis()
