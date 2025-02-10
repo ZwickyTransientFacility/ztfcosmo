@@ -73,7 +73,7 @@ def get_sn_data(saltmodel="salt2-T21", band="gri", phase_range=[-10,40]):
         if not os.path.isfile(fullpath):
             raise ValueError(f"unknown data file phase: {phase}, band: {band}, model: {saltmodel} (file: {naming_convention})")
         
-    return pandas.read_csv(fullpath, index_col=0)
+    return pandas.read_csv(fullpath, index_col=0).set_index("ztfname")
 
 def get_globalhost_data():
     """ """
@@ -93,9 +93,8 @@ def get_localhost_data():
 # ============= #
 def get_target_spectra(name, as_data=True):
     """ """
-    from . import _SPEC_DATAFILE
     from . import spectrum
-    fullpath = _SPEC_DATAFILE[_SPEC_DATAFILE["ztfname"]==name]["fullpath"].values
+    fullpath = spectrum._SPEC_DATAFILE[spectrum._SPEC_DATAFILE["ztfname"]==name]["fullpath"].values
     
     # single spectrum case
     if len(fullpath)==1:
@@ -161,7 +160,7 @@ def get_target_lightcurve(name, as_data=True,
     if as_data:
         ztfcosmodir = get_ztfcosmodir()
         fullpath = os.path.join(ztfcosmodir, "lightcurves", f"{name}_lc.csv")
-        return pandas.read_csv(fullpath,  delim_whitespace=True, comment='#')
+        return pandas.read_csv(fullpath,  sep='\s+', comment='#')
 
     from .lightcurve import LightCurve
     saltparam = get_sn_data(saltmodel=saltmodel, band=band, phase_range=phase_range).loc[name]
@@ -169,40 +168,3 @@ def get_target_lightcurve(name, as_data=True,
                                 saltmodel=saltmodel,
                                 saltparam=saltparam,
                                 phase_range=phase_range)
-
-
-# ============= #
-#   Download    #
-# ============= #
-def get_phase_coverage():
-    """ """
-    ztfcosmodir = get_ztfcosmodir()
-    filepath = os.path.join(ztfcosmodir, "tables", "phase_coverage.parquet")
-    return pandas.read_parquet( filepath )
-    
-def download_release(which="dr2", directory=None):
-    """ download the ZTF Cosmo release.
-
-    Parameters
-    ----------
-    which: str
-        release id:
-        - dr2
-        - dr2.5 [not available yet]
-        - dr3 [not available yet]
-
-    directory: path
-        which should the data be downloaded.
-
-    Returns
-    -------
-    None
-    """
-    if which not in ["dr2"]:#, "dr2.5", "dr3"]:
-        raise ValueError(f'Only "dr2" implemented, {which} given')
-        
-    directory  = get_ztfcosmodir(directory)
-    this_directory = os.path.join(directory, which)
-
-    
-    

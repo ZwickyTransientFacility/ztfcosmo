@@ -2,6 +2,9 @@ import pandas
 import warnings
 import numpy as np
 
+from . import io
+_SPEC_DATAFILE = io.get_spec_datafile()
+
 def read_spectrum(file_, sep=None):
     """ """
     data = open(file_).read().splitlines()
