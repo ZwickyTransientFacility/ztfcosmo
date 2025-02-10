@@ -1,7 +1,7 @@
 # ztfcosmo
 ZTF Cosmo Data Release repository
 
-ZTF SN Ia DR2 [website](http://ztfcosmo.in2p3.fr/).
+Download and visualize ZTF SN Ia DR2 ([Rigault et al. 2025](https://ui.adsabs.harvard.edu/abs/2024arXiv240904346R/abstract)) data through its dedicated [website](http://ztfcosmo.in2p3.fr/).
 
 
 # Basic usage
