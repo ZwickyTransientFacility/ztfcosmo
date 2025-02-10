@@ -1,7 +1,7 @@
 # ztfcosmo
-ZTF Cosmo Data Release repo.
+ZTF Cosmo Data Release repository
 
-Soon be ready for DR2.
+ZTF SN Ia DR2 [website](http://ztfcosmo.in2p3.fr/).
 
 
 # Basic usage
