@@ -27,3 +27,7 @@ spec = ztfcosmo.get_target_spectra("ZTF18aaqfziz", as_data=False)
 fig = spec.show()
 ```
 ![](docs/figures/ZTF18aaqfziz_spectrum.png)
+
+# Citing
+
+If you have been using ztfcosmo for your research, please cite [Rigault et al. 2025](https://ui.adsabs.harvard.edu/abs/2024arXiv240904346R/abstract).
