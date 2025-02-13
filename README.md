@@ -1,7 +1,7 @@
 # ztfcosmo
-ZTF Cosmo Data Release repo.
+ZTF Cosmo Data Release repository
 
-Soon be ready for DR2.
+Download and visualize ZTF SN Ia DR2 ([Rigault et al. 2025](https://ui.adsabs.harvard.edu/abs/2024arXiv240904346R/abstract)) data through its dedicated [website](http://ztfcosmo.in2p3.fr/).
 
 
 # Basic usage
@@ -27,3 +27,7 @@ spec = ztfcosmo.get_target_spectra("ZTF18aaqfziz", as_data=False)
 fig = spec.show()
 ```
 ![](docs/figures/ZTF18aaqfziz_spectrum.png)
+
+# Citing
+
+If you have been using ztfcosmo for your research, please cite [Rigault et al. 2025](https://ui.adsabs.harvard.edu/abs/2024arXiv240904346R/abstract).
