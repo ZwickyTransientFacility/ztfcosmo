@@ -1,6 +1,6 @@
 
 
-
+import warnings
 import os
 import numpy as np
 import pandas
@@ -157,9 +157,13 @@ def get_target_lightcurve(name, as_data=True,
                           band="gri",
                           phase_range=[-10,40]):
     """ get the dataframe of a target's lightcurve """
+    ztfcosmodir = get_ztfcosmodir()
+    fullpath = os.path.join(ztfcosmodir, "lightcurves", f"{name}_lc.csv")
+    if not os.path.isfile(fullpath): # no such file
+        warnings.warn(f"No lightcurve available for {name=}")
+        return None
+    
     if as_data:
-        ztfcosmodir = get_ztfcosmodir()
-        fullpath = os.path.join(ztfcosmodir, "lightcurves", f"{name}_lc.csv")
         return pandas.read_csv(fullpath,  sep='\s+', comment='#')
 
     from .lightcurve import LightCurve
