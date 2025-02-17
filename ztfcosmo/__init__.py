@@ -1,4 +1,4 @@
-__version__ = "1.1.0"
+__version__ = "1.3.0"
 
 
-from .io import get_data, get_target_lightcurve, get_target_spectra, get_spec_datafile
+from .io import *

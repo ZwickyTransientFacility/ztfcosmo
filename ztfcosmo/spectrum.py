@@ -3,11 +3,16 @@ import warnings
 import numpy as np
 
 from . import io
-_SPEC_DATAFILE = io.get_spec_datafile()
+_SPEC_DATAFILE = io.get_spec_datafile(store=True) # store if rebuilding.
 
 def read_spectrum(file_, sep=None):
     """ """
-    data = open(file_).read().splitlines()
+    if 'https://' in file_:
+        from urllib import request
+        data = [l.decode("utf-8").replace("\n", "") for l in request.urlopen(file_)]
+    else:
+        data = open(file_).read().splitlines()
+        
     try:
         header = pandas.DataFrame([d.replace("#","").replace(":"," ").replace("=","").split()[:2] for d in data 
                                    if (d.startswith("#") or "=" in d or ":" in d) and len(d.split())>=2],
@@ -75,9 +80,8 @@ class Spectrum( object ):
     @classmethod
     def from_name(cls, name, **kwargs):
         """ """
-        from . import _SPEC_DATAFILE
-        fullpath = _SPEC_DATAFILE[_SPEC_DATAFILE["ztfname"]==name
-                                 ]["fullpath"].values
+        from .io import _get_target_specfullpath_
+        fullpath = _get_target_specfullpath_(name)
         
         if len(fullpath)==0:
             warnings.warn(f"No spectra target for {name}")
