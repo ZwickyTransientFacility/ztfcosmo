@@ -16,7 +16,7 @@ pip install ztfcosmo
 ```
 
 ## data
-By default **`ztfcosmo` will work as is**, using remote data access from [ztfcosmo.in2p3.fr](http://ztfcosmo.in2p3.fr/download).
+By default **`ztfcosmo` will work as is**, using remote data access from [ztfcosmo.in2p3.fr](https://ztfcosmo.in2p3.fr/download/data).
 
 However, if you need lot of data (like many lightcurves or spectra) or want to quickly access observing logs, it is suggested to use local data copy.
 
