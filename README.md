@@ -16,12 +16,12 @@ pip install ztfcosmo
 ```
 
 ## data
-By default **`ztfcosmo` will work as is**, using remote data access from [ztfcosmo.in2p3.fr](https://ztfcosmo.in2p3.fr/download/data).
+By default **`ztfcosmo` will work as is**, using remote data access from [ztfcosmo.in2p3.fr](https://ztfcosmo.in2p3.fr).
 
 However, if you need lot of data (like many lightcurves or spectra) or want to quickly access observing logs, it is suggested to use local data copy.
 
 To use a local datacopy:
-1. Download [these data](http://ztfcosmo.in2p3.fr/download) and uncompress the zip file. Move the generated directory anywhere you want (e.g. in `'~/data/ztf/'`)
+1. Download [these data](http://ztfcosmo.in2p3.fr/download/data) and uncompress the zip file. Move the generated directory anywhere you want (e.g. in `'~/data/ztf/'`)
 2. Create the environmnent variable named `$ZTFCOSMODIR` pointing to the `ztfsniadr2` directory you just created (e.g., `'~/data/ztf/ztfsniadr2'`)
 
 And that's it ! `ztfcosmo` will recognize that you have data locally (it looks for `$ZTFCOSMODIR`) and will use them instead of the remove access.
