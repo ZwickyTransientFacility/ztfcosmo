@@ -67,9 +67,9 @@ class Spectrum( object ):
         """ 
         load_snidres: fetch for snidresults and loads it if it exists.
         """
-        from .io import parse_spec_filename
+        from .io import _parse_spec_filename_
         header, data = read_spectrum(filename)    
-        meta = parse_spec_filename(filename)
+        meta = _parse_spec_filename_(filename)
         
         this = cls(data, header=header, meta=meta,
                    snidresult=snidresult)
