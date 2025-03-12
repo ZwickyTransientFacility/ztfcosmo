@@ -13,7 +13,7 @@ __all__ = ["get_data", "get_target_lightcurve", "get_target_spectra",
            "get_ztfcosmodir"]
 
 
-def get_ztfcosmodir(directory=None, force_online=True):
+def get_ztfcosmodir(directory=None, force_online=False):
     """ simple function to access the directory where the data is """
     if force_online:
         directory = SOURCE_URL
@@ -23,7 +23,7 @@ def get_ztfcosmodir(directory=None, force_online=True):
 
     return directory
 
-def _ztfdr2name_to_fullpath_(ztfdr2name, force_online=True, directory=None):
+def _ztfdr2name_to_fullpath_(ztfdr2name, force_online=False, directory=None):
     """ """
     dirname = get_ztfcosmodir(directory=directory, force_online=force_online)
     if dirname == SOURCE_URL:
